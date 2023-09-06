@@ -1,3 +1,4 @@
+import type { Game } from '@/types'
 import * as PIXI from 'pixi.js'
 import Victor from 'victor'
 import Entity from '@/entity'
@@ -6,12 +7,11 @@ export default class Zombie extends Entity {
   public sprite
   private player
   private speed
-  private radius
   private attacking
   private interval?: number
 
-  constructor(app: PIXI.Application, player: Entity) {
-    super(app)
+  constructor(player: Entity, game: Game) {
+    super(game)
     this.player = player
     this.sprite = new PIXI.Graphics()
     this.speed = 2
@@ -23,10 +23,10 @@ export default class Zombie extends Entity {
     this.sprite.beginFill(0xff0000, 1)
     this.sprite.drawCircle(0, 0, this.radius)
     this.sprite.endFill()
-    this.app.stage.addChild(this.sprite)
+    this.game.add(this.sprite)
   }
 
-  public update() {
+  public update(delta: number) {
     const e = new Victor(this.x, this.y)
     const s = new Victor(this.player.x, this.player.y)
     if (e.distance(s) < this.player.width * 0.5) {
@@ -34,7 +34,7 @@ export default class Zombie extends Entity {
       return
     }
     const d = s.subtract(e)
-    const v = d.normalize().multiplyScalar(this.speed)
+    const v = d.normalize().multiplyScalar(this.speed * delta)
     this.x += v.x
     this.y += v.y
   }
@@ -46,13 +46,13 @@ export default class Zombie extends Entity {
   }
 
   public die = () => {
-    this.app.stage.removeChild(this.sprite)
+    this.game.remove(this.sprite)
     clearInterval(this.interval)
   }
 
   private randomSpawnPoint() {
     const edge = Math.floor(Math.random() * 4)
-    const canvasSize = this.app.screen.width
+    const canvasSize = this.game.width
     const spawnPoint = new Victor(0, 0)
     switch (edge) {
       case 0: // top

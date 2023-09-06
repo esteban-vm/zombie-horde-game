@@ -1,12 +1,14 @@
-import type Entity from '@/entity'
+import type { Game, Zombie } from '@/types'
 
 export default class Spawner {
+  private game
   private create
   private maxSpawns
   private spawnInterval
-  public spawns: Entity[]
+  public spawns: Zombie[]
 
-  constructor(create: () => Entity) {
+  constructor(game: Game, create: () => Zombie) {
+    this.game = game
     this.create = create
     this.maxSpawns = 10
     this.spawnInterval = 1_000
@@ -15,8 +17,9 @@ export default class Spawner {
   }
 
   private spawn = () => {
+    if (!this.game.started) return
     if (this.spawns.length >= this.maxSpawns) return
-    const entity = this.create()
-    this.spawns.push(entity)
+    const zombie = this.create()
+    this.spawns.push(zombie)
   }
 }

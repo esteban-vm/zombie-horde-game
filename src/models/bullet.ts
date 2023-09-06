@@ -1,3 +1,4 @@
+import type { Game } from '@/types'
 import * as PIXI from 'pixi.js'
 import Victor from 'victor'
 import Entity from '@/entity'
@@ -7,11 +8,10 @@ export default class Bullet extends Entity {
   public velocity
   private player
   private speed
-  private radius
   private angle
 
-  constructor(app: PIXI.Application, player: Entity) {
-    super(app)
+  constructor(player: Entity, game: Game) {
+    super(game)
     this.player = player
     this.speed = 4
     this.radius = 8
@@ -24,4 +24,6 @@ export default class Bullet extends Entity {
     this.sprite.endFill()
     this.velocity = new Victor(Math.cos(this.angle), Math.sin(this.angle)).multiplyScalar(this.speed)
   }
+
+  public update() {}
 }

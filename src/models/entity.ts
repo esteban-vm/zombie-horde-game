@@ -1,14 +1,16 @@
-import type * as PIXI from 'pixi.js'
+import type { Game, Sprite } from '@/types'
 
 export default abstract class Entity {
-  protected app
-  protected abstract sprite: PIXI.Sprite | PIXI.Graphics
+  public game
+  public radius
+  public abstract sprite: Sprite
 
-  constructor(app: PIXI.Application) {
-    this.app = app
+  constructor(game: Game) {
+    this.game = game
+    this.radius = 0
   }
 
-  public update() {}
+  public abstract update(delta: number): void
   public attack = () => {}
   public die = () => {}
 
