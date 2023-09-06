@@ -1,9 +1,9 @@
 import type { Game, Sprite } from '@/types'
 
 export default abstract class Entity {
-  public game
+  protected game
+  protected abstract sprite: Sprite
   public radius
-  public abstract sprite: Sprite
 
   constructor(game: Game) {
     this.game = game

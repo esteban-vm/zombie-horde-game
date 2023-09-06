@@ -5,7 +5,7 @@ import HealthBar from '@/health-bar'
 import Shooting from '@/shooting'
 
 export default class Player extends Entity {
-  public sprite
+  protected sprite
   public shooting
   public dead
   private lastButton

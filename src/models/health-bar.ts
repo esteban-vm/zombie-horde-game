@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js'
 import Entity from '@/entity'
 
 export default class HealthBar extends Entity {
-  public sprite
+  protected sprite
   private margin
   public tmpWidth
   private tmpHeight

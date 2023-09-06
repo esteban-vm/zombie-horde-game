@@ -4,13 +4,13 @@ import Victor from 'victor'
 import Entity from '@/entity'
 
 export default class Zombie extends Entity {
-  public sprite
+  protected sprite
   private player
   private speed
   private attacking
   private interval?: number
 
-  constructor(player: Entity, game: Game) {
+  constructor(game: Game, player: Entity) {
     super(game)
     this.player = player
     this.sprite = new PIXI.Graphics()

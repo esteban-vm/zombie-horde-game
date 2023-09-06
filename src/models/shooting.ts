@@ -5,7 +5,7 @@ export default class Shooting {
   public game
   public player
   public bullets: Bullet[]
-  public maxBullets
+  private maxBullets
   private interval?: number
 
   constructor(player: Entity, game: Game) {
@@ -34,7 +34,7 @@ export default class Shooting {
       return Math.abs(x) < width && Math.abs(y) < height
     })
     this.bullets.forEach((bullet) => this.game.add(bullet.sprite))
-    const bullet = new Bullet(this.player, this.game)
+    const bullet = new Bullet(this.game, this.player)
     this.bullets.push(bullet)
     this.game.add(bullet.sprite)
   }

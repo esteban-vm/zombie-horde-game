@@ -10,7 +10,7 @@ export default class Bullet extends Entity {
   private speed
   private angle
 
-  constructor(player: Entity, game: Game) {
+  constructor(game: Game, player: Entity) {
     super(game)
     this.player = player
     this.speed = 4

@@ -9,7 +9,7 @@ export default class Game {
   private player
   private zombies
   private startScene
-  private overScene
+  private endScene
   public started
 
   constructor() {
@@ -18,12 +18,12 @@ export default class Game {
     const backgroundColor = 0x5c812f
     this.app = new PIXI.Application({ view, width: size, height: size, backgroundColor })
     this.player = new Player(this)
-    const spawner = new Spawner(this, () => new Zombie(this.player, this))
+    const spawner = new Spawner(this, () => new Zombie(this, this.player))
     this.zombies = spawner.spawns
     this.started = false
     this.init()
     this.startScene = this.createScene('Click to Start')
-    this.overScene = this.createScene('Game Over')
+    this.endScene = this.createScene('Game Over')
     document.addEventListener('click', this.start)
   }
 
@@ -47,13 +47,13 @@ export default class Game {
     return this.app.renderer.events.pointer
   }
 
-  public set sort(_: boolean) {
-    this.app.stage.sortableChildren = true
+  public set sort(value: boolean) {
+    this.app.stage.sortableChildren = value
   }
 
   private init() {
     this.app.ticker.add((delta) => {
-      this.overScene.visible = this.player.dead
+      this.endScene.visible = this.player.dead
       this.startScene.visible = !this.started
       if (!this.started) return
       this.player.update(delta)
@@ -67,7 +67,7 @@ export default class Game {
       this.zombies.forEach((zombie, index) => {
         const dx = zombie.x - bullet.x
         const dy = zombie.y - bullet.y
-        const distance = Math.sqrt(dx ** 2 + dy ** 2)
+        const distance = Math.hypot(dx, dy)
         if (distance < bullet.radius + zombie.radius) {
           this.zombies.splice(index, 1)
           zombie.die()
