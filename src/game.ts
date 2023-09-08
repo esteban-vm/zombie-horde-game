@@ -1,10 +1,8 @@
 import type { Sprite, Graphics, IApplicationOptions } from '@/types'
 import { Application, Assets, Container, Text, BaseTexture, SCALE_MODES } from 'pixi.js'
-import Player from '@/player'
-import Spawner from '@/spawner'
-import Zombie from '@/zombie'
+import { Player, Spawner, Zombie } from '@/models'
 
-export const characters = <const>['cop', 'dog', 'female', 'nurse', 'quick', 'tank', 'hero']
+export const assets = <const>['cop', 'dog', 'female', 'nurse', 'quick', 'tank', 'hero']
 
 export default class Game {
   private app
@@ -15,9 +13,7 @@ export default class Game {
   public zombieNames
   public started
 
-  /**
-   * @private
-   */
+  /** @private */
   private constructor() {
     BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST
 
@@ -33,7 +29,7 @@ export default class Game {
     this.endScene = this.createScene('Game Over')
 
     this.player = new Player(this)
-    this.zombieNames = characters.filter((character) => character !== 'hero')
+    this.zombieNames = assets.filter((asset) => asset !== 'hero')
     this.zombies = new Spawner(this, () => new Zombie(this, this.player)).spawns
 
     this.app.ticker.add((delta) => {
@@ -51,10 +47,8 @@ export default class Game {
 
   public static async initialize() {
     try {
-      for (const character of characters) {
-        Assets.add(character, `assets/${character !== 'hero' ? character + 'zee' : character}.json`)
-      }
-      await Assets.load([...characters])
+      assets.forEach((asset) => Assets.add(asset, `assets/${asset !== 'hero' ? asset + 'zee' : asset}.json`))
+      await Assets.load([...assets])
       return new Game()
     } catch (error) {
       console.log(error)
