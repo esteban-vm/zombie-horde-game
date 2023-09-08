@@ -1,5 +1,5 @@
 export { default as Bullet } from '@/bullet'
-export { default as Entity } from '@/entity'
+export * from '@/entity'
 export { default as HealthBar } from '@/health-bar'
 export { default as Player } from '@/player'
 export { default as Shooting } from '@/shooting'

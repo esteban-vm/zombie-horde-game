@@ -1,2 +1,2 @@
 import Game from '@/game'
-export default new Game()
+export default await Game.initialize()

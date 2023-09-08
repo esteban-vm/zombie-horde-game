@@ -1,4 +1,4 @@
-import type { Game, Entity } from '@/types'
+import type { Game, Player } from '@/types'
 import Bullet from '@/bullet'
 
 export default class Shooting {
@@ -8,7 +8,7 @@ export default class Shooting {
   private maxBullets
   private interval?: number
 
-  constructor(player: Entity, game: Game) {
+  constructor(player: Player, game: Game) {
     this.game = game
     this.player = player
     this.bullets = []

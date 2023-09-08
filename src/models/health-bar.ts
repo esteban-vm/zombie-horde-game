@@ -1,6 +1,6 @@
 import type { Game } from '@/types'
-import * as PIXI from 'pixi.js'
-import Entity from '@/entity'
+import { Graphics } from 'pixi.js'
+import { Entity } from '@/entity'
 
 export default class HealthBar extends Entity {
   protected sprite
@@ -13,7 +13,7 @@ export default class HealthBar extends Entity {
     this.margin = 16
     this.tmpWidth = this.game.width - 2 * this.margin
     this.tmpHeight = 8
-    this.sprite = new PIXI.Graphics()
+    this.sprite = new Graphics()
     this.sprite.beginFill(0xff0000)
     this.sprite.drawRect(
       this.margin,
@@ -26,6 +26,4 @@ export default class HealthBar extends Entity {
     this.game.sort = true
     this.game.add(this.sprite)
   }
-
-  public update() {}
 }

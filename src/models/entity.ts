@@ -1,18 +1,16 @@
-import type { Game, Sprite } from '@/types'
+import type { Game, Name, Sprite, Graphics, Spritesheet, AnimatedSprite } from '@/types'
 
-export default abstract class Entity {
+export abstract class Entity {
   protected game
-  protected abstract sprite: Sprite
+  protected abstract sprite: Sprite | Graphics
   public radius
+  public name: Name
 
-  constructor(game: Game) {
+  protected constructor(game: Game) {
     this.game = game
     this.radius = 0
+    this.name = ''
   }
-
-  public abstract update(delta: number): void
-  public attack = () => {}
-  public die = () => {}
 
   public get x() {
     return this.sprite.position.x
@@ -53,4 +51,20 @@ export default abstract class Entity {
   public set rotation(value: number) {
     this.sprite.rotation = value
   }
+}
+
+export abstract class AnimatedEntity extends Entity {
+  protected animations: AnimatedSprite[]
+  protected abstract sprite: AnimatedSprite
+  protected abstract spritesheet: Spritesheet
+
+  protected constructor(game: Game) {
+    super(game)
+    this.animations = []
+  }
+
+  protected abstract load(): Promise<void>
+  protected abstract update(delta: number): void
+  protected attack = () => {}
+  protected die = () => {}
 }

@@ -1,28 +1,38 @@
-import type { Game } from '@/types'
-import * as PIXI from 'pixi.js'
+import type { Game, Player, Spritesheet } from '@/types'
+import { Assets, AnimatedSprite } from 'pixi.js'
 import Victor from 'victor'
-import Entity from '@/entity'
+import { AnimatedEntity } from '@/entity'
 
-export default class Zombie extends Entity {
-  protected sprite
+export default class Zombie extends AnimatedEntity {
+  protected sprite!: AnimatedSprite
+  protected spritesheet!: Spritesheet
   private player
   private speed
   private attacking
   private interval?: number
 
-  constructor(game: Game, player: Entity) {
+  constructor(game: Game, player: Player) {
     super(game)
+    this.name = this.game.zombieNames[Math.floor(Math.random() * this.game.zombieNames.length)]
     this.player = player
-    this.sprite = new PIXI.Graphics()
-    this.speed = 2
-    this.radius = 16
+    this.speed = 0
     this.attacking = false
+    this.load()
+  }
+
+  protected async load() {
+    this.spritesheet = <Spritesheet>await Assets.get(this.name)
+    this.animations.push(new AnimatedSprite(this.spritesheet.animations['die']))
+    this.animations.push(new AnimatedSprite(this.spritesheet.animations['attack']))
+    this.animations.push(new AnimatedSprite(this.spritesheet.animations['walk']))
+    this.sprite = new AnimatedSprite(this.spritesheet.animations['walk'])
+    this.speed = this.name === 'quick' ? 1 : 0.25
+    this.sprite.anchor.set(0.5)
+    this.sprite.animationSpeed = this.name === 'quick' ? 0.2 : 0.1
+    this.sprite.play()
     const r = this.randomSpawnPoint()
     this.x = r.x
     this.y = r.y
-    this.sprite.beginFill(0xff0000, 1)
-    this.sprite.drawCircle(0, 0, this.radius)
-    this.sprite.endFill()
     this.game.add(this.sprite)
   }
 

@@ -3,14 +3,13 @@
 body {
   background-color: #242424;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  font-family: sans-serif;
 }
 
-h1 {
-  color: aliceblue;
-  font-family: sans-serif;
-  user-select: none;
+canvas {
+  max-width: 100vw;
+  max-height: 100vh;
 }

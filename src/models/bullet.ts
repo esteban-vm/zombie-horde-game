@@ -1,7 +1,7 @@
-import type { Game } from '@/types'
-import * as PIXI from 'pixi.js'
+import type { Game, Player } from '@/types'
+import { Graphics } from 'pixi.js'
 import Victor from 'victor'
-import Entity from '@/entity'
+import { Entity } from '@/entity'
 
 export default class Bullet extends Entity {
   public sprite
@@ -10,13 +10,13 @@ export default class Bullet extends Entity {
   private speed
   private angle
 
-  constructor(game: Game, player: Entity) {
+  constructor(game: Game, player: Player) {
     super(game)
     this.player = player
     this.speed = 4
     this.radius = 8
-    this.angle = this.player.rotation - Math.PI * 0.5
-    this.sprite = new PIXI.Graphics()
+    this.angle = this.player.angle - Math.PI * 0.5
+    this.sprite = new Graphics()
     this.x = this.player.x
     this.y = this.player.y
     this.sprite.beginFill(0x0000ff, 1)
@@ -24,6 +24,4 @@ export default class Bullet extends Entity {
     this.sprite.endFill()
     this.velocity = new Victor(Math.cos(this.angle), Math.sin(this.angle)).multiplyScalar(this.speed)
   }
-
-  public update() {}
 }

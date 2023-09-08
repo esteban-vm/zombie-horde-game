@@ -1,8 +1,10 @@
-import type { Sprite } from '@/types'
-import * as PIXI from 'pixi.js'
+import type { Sprite, Graphics, IApplicationOptions } from '@/types'
+import { Application, Assets, Container, Text, BaseTexture, SCALE_MODES } from 'pixi.js'
 import Player from '@/player'
 import Spawner from '@/spawner'
 import Zombie from '@/zombie'
+
+export const characters = <const>['cop', 'dog', 'female', 'nurse', 'quick', 'tank', 'hero']
 
 export default class Game {
   private app
@@ -10,29 +12,62 @@ export default class Game {
   private zombies
   private startScene
   private endScene
+  public zombieNames
   public started
 
-  constructor() {
-    const size = 512
+  /**
+   * @private
+   */
+  private constructor() {
+    BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST
+
     const view = document.querySelector('canvas')!
-    const backgroundColor = 0x5c812f
-    this.app = new PIXI.Application({ view, width: size, height: size, backgroundColor })
-    this.player = new Player(this)
-    const spawner = new Spawner(this, () => new Zombie(this, this.player))
-    this.zombies = spawner.spawns
+    const size = 400
+    const backgroundColor = 0x312a2b
+    const resolution = 2
+    const options: Partial<IApplicationOptions> = { view, width: size, height: size, backgroundColor, resolution }
+    this.app = new Application(options)
+
     this.started = false
-    this.init()
     this.startScene = this.createScene('Click to Start')
     this.endScene = this.createScene('Game Over')
-    document.addEventListener('click', this.start)
+
+    this.player = new Player(this)
+    this.zombieNames = characters.filter((character) => character !== 'hero')
+    this.zombies = new Spawner(this, () => new Zombie(this, this.player)).spawns
+
+    this.app.ticker.add((delta) => {
+      this.endScene.visible = this.player.dead
+      this.startScene.visible = !this.started
+      if (this.started) {
+        this.player.update(delta)
+        this.zombies.forEach((zombie) => zombie.update(delta))
+        this.bulletHitTest()
+      }
+    })
+
+    document.addEventListener('click', () => void (this.started = true))
   }
 
-  public add(sprite: Sprite) {
-    this.app.stage.addChild(sprite)
+  public static async initialize() {
+    try {
+      for (const character of characters) {
+        Assets.add(character, `assets/${character !== 'hero' ? character + 'zee' : character}.json`)
+      }
+      await Assets.load([...characters])
+      return new Game()
+    } catch (error) {
+      console.log(error)
+      return null
+    }
   }
 
-  public remove(sprite: Sprite) {
-    this.app.stage.removeChild(sprite)
+  public add(obj: Sprite | Graphics) {
+    this.app.stage.addChild(obj)
+  }
+
+  public remove(obj: Sprite | Graphics) {
+    this.app.stage.removeChild(obj)
   }
 
   public get width() {
@@ -51,17 +86,6 @@ export default class Game {
     this.app.stage.sortableChildren = value
   }
 
-  private init() {
-    this.app.ticker.add((delta) => {
-      this.endScene.visible = this.player.dead
-      this.startScene.visible = !this.started
-      if (!this.started) return
-      this.player.update(delta)
-      this.zombies.forEach((zombie) => zombie.update(delta))
-      this.bulletHitTest()
-    })
-  }
-
   private bulletHitTest() {
     this.player.shooting.bullets.forEach((bullet) => {
       this.zombies.forEach((zombie, index) => {
@@ -77,18 +101,14 @@ export default class Game {
   }
 
   private createScene(text: string) {
-    const sceneText = new PIXI.Text(text)
+    const sceneText = new Text(text)
     sceneText.x = this.app.screen.width * 0.5
     sceneText.y = 0
     sceneText.anchor.set(0.5, 0)
-    const sceneContainer = new PIXI.Container()
+    const sceneContainer = new Container()
     sceneContainer.zIndex = 1
     sceneContainer.addChild(sceneText)
     this.app.stage.addChild(sceneContainer)
     return sceneContainer
-  }
-
-  private start = () => {
-    this.started = true
   }
 }
