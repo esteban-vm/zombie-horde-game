@@ -45,6 +45,7 @@ export default class Zombie extends AnimatedEntity {
     }
     const d = s.subtract(e)
     const v = d.normalize().multiplyScalar(this.speed * delta)
+    this.sprite.scale.x = v.x < 0 ? 1 : -1
     this.x += v.x
     this.y += v.y
   }
@@ -53,10 +54,16 @@ export default class Zombie extends AnimatedEntity {
     if (this.attacking) return
     this.attacking = true
     this.interval = setInterval(this.player.attack, 500)
+    this.sprite.textures = this.animations[1].textures
+    this.sprite.animationSpeed = 0.1
+    this.sprite.play()
   }
 
   public die = () => {
-    this.game.remove(this.sprite)
+    this.sprite.textures = this.animations[0].textures
+    this.sprite.loop = false
+    this.sprite.onComplete = () => setTimeout(() => this.game.remove(this.sprite), 30_000)
+    this.sprite.play()
     clearInterval(this.interval)
   }
 
