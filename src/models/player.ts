@@ -1,5 +1,5 @@
 import type { Game, Spritesheet } from '@/types'
-import { Assets, AnimatedSprite } from 'pixi.js'
+import { AnimatedSprite } from 'pixi.js'
 import { AnimatedEntity } from '@/entity'
 import HealthBar from '@/health-bar'
 import Shooting from '@/shooting'
@@ -28,8 +28,8 @@ export default class Player extends AnimatedEntity {
     this.load()
   }
 
-  protected async load() {
-    this.spritesheet = <Spritesheet>await Assets.get(this.name)
+  protected load() {
+    super.load()
     this.animations.push(new AnimatedSprite(this.spritesheet.animations['idle']))
     this.animations.push(new AnimatedSprite(this.spritesheet.animations['shoot']))
     this.sprite = new AnimatedSprite(this.spritesheet.animations['idle'])

@@ -1,6 +1,6 @@
 import type { Game, Player, Spritesheet } from '@/types'
-import { Assets, AnimatedSprite } from 'pixi.js'
 import Victor from 'victor'
+import { AnimatedSprite } from 'pixi.js'
 import { AnimatedEntity } from '@/entity'
 
 export default class Zombie extends AnimatedEntity {
@@ -20,8 +20,8 @@ export default class Zombie extends AnimatedEntity {
     this.load()
   }
 
-  protected async load() {
-    this.spritesheet = <Spritesheet>await Assets.get(this.name)
+  protected load() {
+    super.load()
     this.animations.push(new AnimatedSprite(this.spritesheet.animations['die']))
     this.animations.push(new AnimatedSprite(this.spritesheet.animations['attack']))
     this.animations.push(new AnimatedSprite(this.spritesheet.animations['walk']))

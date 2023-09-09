@@ -1,4 +1,5 @@
 import type { Game, Name, Sprite, Graphics, Spritesheet, AnimatedSprite } from '@/types'
+import { Assets } from 'pixi.js'
 
 export abstract class Entity {
   protected game
@@ -63,8 +64,10 @@ export abstract class AnimatedEntity extends Entity {
     this.animations = []
   }
 
-  protected abstract load(): Promise<void>
   protected abstract update(delta: number): void
-  protected attack = () => {}
-  protected die = () => {}
+  protected abstract attack: () => void
+
+  protected load() {
+    this.spritesheet = <Spritesheet>Assets.get(this.name)
+  }
 }
