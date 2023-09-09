@@ -33,7 +33,7 @@ export default class Player extends AnimatedEntity {
     this.animations.push(new AnimatedSprite(this.spritesheet.animations['idle']))
     this.animations.push(new AnimatedSprite(this.spritesheet.animations['shoot']))
     this.sprite = new AnimatedSprite(this.spritesheet.animations['idle'])
-    this.sprite.anchor.set(0.5)
+    this.sprite.anchor.set(0.5, 0.3)
     this.sprite.animationSpeed = 0.1
     this.sprite.play()
     this.x = this.game.width * 0.5

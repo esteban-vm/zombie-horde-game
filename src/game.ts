@@ -2,7 +2,7 @@ import type { Sprite, Graphics, IApplicationOptions } from '@/types'
 import { Application, Assets, Container, Text, BaseTexture, SCALE_MODES } from 'pixi.js'
 import { Player, Spawner, Zombie } from '@/models'
 
-export const assets = <const>['cop', 'dog', 'female', 'nurse', 'quick', 'tank', 'hero']
+export const assets = <const>['cop', 'dog', 'female', 'nurse', 'quick', 'tank', 'hero', 'bullet']
 
 export default class Game {
   private app
@@ -29,7 +29,7 @@ export default class Game {
     this.endScene = this.createScene('Game Over')
 
     this.player = new Player(this)
-    this.zombieNames = assets.filter((asset) => asset !== 'hero')
+    this.zombieNames = assets.filter((asset) => asset !== 'hero' && asset !== 'bullet')
     this.zombies = new Spawner(this, () => new Zombie(this, this.player)).spawns
 
     this.app.ticker.add((delta) => {
@@ -47,7 +47,11 @@ export default class Game {
 
   public static async initialize() {
     try {
-      assets.forEach((asset) => Assets.add(asset, `assets/${asset !== 'hero' ? asset + 'zee' : asset}.json`))
+      assets.forEach((asset) => {
+        const resource = asset !== 'hero' && asset !== 'bullet' ? asset + 'zee' : asset
+        const extension = asset === 'bullet' ? '.png' : '.json'
+        Assets.add(asset, `assets/${resource + extension}`)
+      })
       await Assets.load([...assets])
       return new Game()
     } catch (error) {
