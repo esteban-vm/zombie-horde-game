@@ -1,6 +1,6 @@
 import type { Game, Spritesheet } from '@/types'
-import Victor from 'victor'
 import { AnimatedSprite } from 'pixi.js'
+import Victor from 'victor'
 import { AnimatedEntity } from '@/entity'
 
 export default class Zombie extends AnimatedEntity {

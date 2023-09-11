@@ -1,7 +1,7 @@
 import type { Game } from '@/types'
 import { Sprite, Texture, ParticleContainer } from 'pixi.js'
 import { Emitter, upgradeConfig } from '@pixi/particle-emitter'
-import { rain } from '@/emitter.config'
+import rain from '@/rain'
 
 export default class Weather {
   public game

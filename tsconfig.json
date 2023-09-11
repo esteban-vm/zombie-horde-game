@@ -8,7 +8,7 @@
 
     /* Path aliases */
     "baseUrl": "src",
-    "paths": { "@/*": ["./*", "./models/*"] },
+    "paths": { "@/*": ["./*", "./models/*", "./constants/*"] },
 
     /* Bundler mode */
     "moduleResolution": "bundler",

@@ -1,9 +1,8 @@
 import type { DisplayObject } from '@/types'
-import { Application, Assets, Container, Text, BaseTexture, SCALE_MODES } from 'pixi.js'
+import { Application, Assets, Container, Text, TextStyle, BaseTexture, SCALE_MODES } from 'pixi.js'
 import { Player, Spawner, Zombie, Weather } from '@/models'
-
-export const zombies = <const>['cop', 'dog', 'female', 'nurse', 'quick', 'tank']
-export const assets = <const>[...zombies, 'hero', 'bullet', 'rain']
+import { textStyle, subTextStyle } from '@/styles'
+import { all, zombies } from '@/assets'
 
 export default class Game {
   private app
@@ -26,7 +25,7 @@ export default class Game {
     this.app = new Application({ view, width: size, height: size, backgroundColor, resolution })
 
     this.started = false
-    this.startScene = this.createScene('Click to Start')
+    this.startScene = this.createScene('HordeZee', 'Click to Start')
     this.endScene = this.createScene('Game Over')
     this.zombieNames = zombies
 
@@ -49,13 +48,13 @@ export default class Game {
 
   public static async initialize() {
     try {
-      assets.forEach((asset) => {
+      all.forEach((asset) => {
         const resource = asset !== 'hero' && asset !== 'bullet' && asset !== 'rain' ? asset + 'zee' : asset
         const extension = asset === 'bullet' || asset === 'rain' ? '.png' : '.json'
         Assets.add(asset, `assets/${resource + extension}`)
       })
 
-      await Assets.load([...assets])
+      await Assets.load([...all])
       return new Game()
     } catch (error) {
       console.log(error)
@@ -101,16 +100,21 @@ export default class Game {
     })
   }
 
-  private createScene(text: string) {
-    const sceneText = new Text(text)
-    sceneText.x = this.app.screen.width * 0.5
-    sceneText.y = 0
-    sceneText.anchor.set(0.5, 0)
-    const sceneContainer = new Container()
-    sceneContainer.zIndex = 1
-    sceneContainer.addChild(sceneText)
-    this.app.stage.addChild(sceneContainer)
-    return sceneContainer
+  private createScene(_text: string, _subText?: string) {
+    const text = new Text(_text, new TextStyle(textStyle))
+    text.x = this.width * 0.5
+    text.y = 0
+    text.anchor.set(0.5, 0)
+    const subText = new Text(_subText, new TextStyle(subTextStyle))
+    subText.x = this.width * 0.5
+    subText.y = 50
+    subText.anchor.set(0.5, 0)
+    const container = new Container()
+    container.zIndex = 1
+    container.addChild(text)
+    container.addChild(subText)
+    this.add(container)
+    return container
   }
 
   private start = () => {

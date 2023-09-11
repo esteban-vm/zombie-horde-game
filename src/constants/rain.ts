@@ -1,7 +1,7 @@
 //https://pixijs.io/pixi-particles-editor/#rain
 import type { EmitterConfigV1 } from '@pixi/particle-emitter'
 
-export const rain: EmitterConfigV1 = {
+const rain: EmitterConfigV1 = {
   alpha: { start: 0, end: 0.5 },
   scale: { start: 1, end: 1 },
   color: { start: 'ffffff', end: 'ffffff' },
@@ -18,3 +18,5 @@ export const rain: EmitterConfigV1 = {
   spawnType: 'rect',
   spawnRect: { x: -300, y: -100, w: 800, h: 10 },
 }
+
+export default rain
