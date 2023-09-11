@@ -19,7 +19,7 @@ export default class Player extends AnimatedEntity {
     super(game)
     this.name = 'hero'
     this.angle = 0
-    this.shooting = new Shooting(this, this.game)
+    this.shooting = new Shooting(this.game)
     this.dead = false
     this.lastButton = 0
     this.healthBar = new HealthBar(this.game)

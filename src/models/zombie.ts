@@ -1,4 +1,4 @@
-import type { Game, Player, Spritesheet } from '@/types'
+import type { Game, Spritesheet } from '@/types'
 import Victor from 'victor'
 import { AnimatedSprite } from 'pixi.js'
 import { AnimatedEntity } from '@/entity'
@@ -11,10 +11,11 @@ export default class Zombie extends AnimatedEntity {
   private attacking
   private interval?: number
 
-  constructor(game: Game, player: Player) {
+  constructor(game: Game) {
     super(game)
-    this.name = this.game.zombieNames[Math.floor(Math.random() * this.game.zombieNames.length)]
-    this.player = player
+    const names = this.game.zombieNames
+    this.name = names[Math.floor(Math.random() * names.length)]
+    this.player = this.game.player
     this.speed = 0
     this.attacking = false
     this.load()
@@ -59,7 +60,7 @@ export default class Zombie extends AnimatedEntity {
     this.sprite.play()
   }
 
-  public die = () => {
+  public kill = () => {
     this.sprite.textures = this.animations[0].textures
     this.sprite.loop = false
     this.sprite.onComplete = () => setTimeout(() => this.game.remove(this.sprite), 30_000)

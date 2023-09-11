@@ -1,4 +1,4 @@
-import type { Game, Player } from '@/types'
+import type { Game } from '@/types'
 import Bullet from '@/bullet'
 
 export default class Shooting {
@@ -8,9 +8,9 @@ export default class Shooting {
   private maxBullets
   private interval?: number
 
-  constructor(player: Player, game: Game) {
+  constructor(game: Game) {
     this.game = game
-    this.player = player
+    this.player = this.game.player
     this.bullets = []
     this.maxBullets = 3
   }
@@ -34,7 +34,7 @@ export default class Shooting {
       return Math.abs(x) < width && Math.abs(y) < height
     })
     this.bullets.forEach((bullet) => this.game.add(bullet.sprite))
-    const bullet = new Bullet(this.game, this.player)
+    const bullet = new Bullet(this.game)
     this.bullets.push(bullet)
     this.game.add(bullet.sprite)
   }
