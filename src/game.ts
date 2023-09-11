@@ -37,11 +37,12 @@ export default class Game {
       height: this.size,
       backgroundColor: 0x312a2b,
       resolution: 2,
+      eventFeatures: { click: true },
     })
 
-    this.preIntroScene = this.createScene('HordeZee', 'Click to Continue')
-    this.startScene = this.createScene('HordeZee', 'Click to Start')
-    this.overScene = this.createScene('HordeZee', 'Game Over')
+    this.preIntroScene = this.createScene('Click to Continue')
+    this.startScene = this.createScene('Click to Start')
+    this.overScene = this.createScene('Game Over')
 
     this.player = new Player(this)
     this.weather = new Weather(this)
@@ -100,7 +101,7 @@ export default class Game {
       if (this.currentTime > this.duration - 0.2) this.currentTime = 0
     })
 
-    document.addEventListener('click', () => {
+    document.addEventListener('pointerdown', () => {
       switch (this.state) {
         case State.PreIntro:
           this.state = State.Intro
@@ -153,12 +154,12 @@ export default class Game {
     })
   }
 
-  private createScene(_text: string, _subText: string) {
-    const text = new Text(_text, new TextStyle(textStyle))
+  private createScene(textContent: string) {
+    const text = new Text('HordeZee', new TextStyle(textStyle))
     text.x = this.width * 0.5
     text.y = 0
     text.anchor.set(0.5, 0)
-    const subText = new Text(_subText, new TextStyle(subTextStyle))
+    const subText = new Text(textContent, new TextStyle(subTextStyle))
     subText.x = this.width * 0.5
     subText.y = 50
     subText.anchor.set(0.5, 0)

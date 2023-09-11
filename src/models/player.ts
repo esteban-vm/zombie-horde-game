@@ -42,7 +42,6 @@ export default class Player extends AnimatedEntity {
   }
 
   public update(delta: number) {
-    // this.attack()
     if (this.dead) return
     const { global, buttons } = this.game.pointer
     this.angle = Math.atan2(global.y - this.y, global.x - this.x) + Math.PI * 0.5
