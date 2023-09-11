@@ -52,6 +52,15 @@ export abstract class Entity {
   public set rotation(value: number) {
     this.sprite.rotation = value
   }
+
+  public set scale(value: number) {
+    this.sprite.scale.x = value
+    this.sprite.scale.y = value
+  }
+
+  public get scale() {
+    return this.sprite.scale.x
+  }
 }
 
 export abstract class AnimatedEntity extends Entity {

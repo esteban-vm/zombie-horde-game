@@ -1,4 +1,5 @@
 import type { Game, Zombie } from '@/types'
+import State from '@/state'
 
 export default class Spawner {
   private game
@@ -17,7 +18,7 @@ export default class Spawner {
   }
 
   private spawn = () => {
-    if (!this.game.started) return
+    if (this.game.state !== State.Running) return
     if (this.spawns.length >= this.maxSpawns) return
     const zombie = this.create()
     this.spawns.push(zombie)

@@ -3,47 +3,66 @@ import { Application, Assets, Container, Text, TextStyle, BaseTexture, SCALE_MOD
 import { Player, Spawner, Zombie, Weather } from '@/models'
 import { textStyle, subTextStyle } from '@/styles'
 import { all, zombies } from '@/assets'
+import State from '@/state'
 
 export default class Game {
   private app
+  public state
   public player
-  private weather
+  private size
+  public weather
   private zombies
+  private preIntroScene
   private startScene
-  private endScene
+  private overScene
   public zombieNames
-  public started
 
   /** @private */
   private constructor() {
     BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST
-
-    const view = document.querySelector('canvas')!
-    const size = 400
-    const backgroundColor = 0x312a2b
-    const resolution = 2
-    this.app = new Application({ view, width: size, height: size, backgroundColor, resolution })
-
-    this.started = false
-    this.startScene = this.createScene('HordeZee', 'Click to Start')
-    this.endScene = this.createScene('Game Over')
+    this.state = State.PreIntro
+    this.size = 400
     this.zombieNames = zombies
+
+    this.app = new Application({
+      view: document.querySelector('canvas')!,
+      width: this.size,
+      height: this.size,
+      backgroundColor: 0x312a2b,
+      resolution: 2,
+    })
+
+    this.preIntroScene = this.createScene('HordeZee', 'Click to Continue')
+    this.startScene = this.createScene('HordeZee', 'Click to Start')
+    this.overScene = this.createScene('HordeZee', 'Game Over')
 
     this.player = new Player(this)
     this.weather = new Weather(this)
     this.zombies = new Spawner(this, () => new Zombie(this)).spawns
 
     this.app.ticker.add((delta) => {
-      this.endScene.visible = this.player.dead
-      this.startScene.visible = !this.started
-      if (this.started) {
-        this.player.update(delta)
-        this.zombies.forEach((zombie) => zombie.update(delta))
-        this.bulletHitTest()
+      if (this.player.dead) this.state = State.Over
+      this.preIntroScene.visible = this.state === State.PreIntro
+      this.startScene.visible = this.state === State.Start
+      this.overScene.visible = this.state === State.Over
+
+      switch (this.state) {
+        case State.PreIntro:
+          this.player.scale = 4
+          break
+        case State.Intro:
+          this.player.scale -= 0.01
+          if (this.player.scale <= 1) this.state = State.Start
+          break
+        case State.Running:
+          this.player.update(delta)
+          this.zombies.forEach((zombie) => zombie.update(delta))
+          this.bulletHitTest()
+          break
       }
     })
 
-    document.addEventListener('click', this.start)
+    document.addEventListener('click', this.handleClick)
   }
 
   public static async initialize() {
@@ -100,7 +119,7 @@ export default class Game {
     })
   }
 
-  private createScene(_text: string, _subText?: string) {
+  private createScene(_text: string, _subText: string) {
     const text = new Text(_text, new TextStyle(textStyle))
     text.x = this.width * 0.5
     text.y = 0
@@ -117,8 +136,21 @@ export default class Game {
     return container
   }
 
-  private start = () => {
-    this.started = true
-    this.weather.enableSound()
+  // private start = () => {
+  //   this.started = true
+  //   this.weather.enableSound()
+  // }
+
+  private handleClick = () => {
+    switch (this.state) {
+      case State.PreIntro:
+        this.state = State.Intro
+        // this.music.play()
+        break
+      case State.Start:
+        this.state = State.Running
+        // this.zombieHorde.play()
+        break
+    }
   }
 }
