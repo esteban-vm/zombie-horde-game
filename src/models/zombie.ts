@@ -9,6 +9,7 @@ export default class Zombie extends AnimatedEntity {
   private player
   private speed
   private attacking
+  private audio
   private interval?: number
 
   constructor(game: Game) {
@@ -18,6 +19,7 @@ export default class Zombie extends AnimatedEntity {
     this.player = this.game.player
     this.speed = 0
     this.attacking = false
+    this.audio = new Audio('assets/squelch.mp3')
     this.load()
   }
 
@@ -61,10 +63,14 @@ export default class Zombie extends AnimatedEntity {
   }
 
   public kill = () => {
+    this.audio.currentTime = 0
+    this.audio.volume = 0.5
+    this.audio.play()
     this.sprite.textures = this.animations[0].textures
     this.sprite.loop = false
     this.sprite.onComplete = () => setTimeout(() => this.game.remove(this.sprite), 30_000)
     this.sprite.play()
+    this.sprite.zIndex = -1
     clearInterval(this.interval)
   }
 

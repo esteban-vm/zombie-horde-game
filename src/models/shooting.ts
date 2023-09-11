@@ -5,6 +5,7 @@ export default class Shooting {
   public game
   public player
   public bullets: Bullet[]
+  private audio
   private maxBullets
   private interval?: number
 
@@ -12,6 +13,7 @@ export default class Shooting {
     this.game = game
     this.player = this.game.player
     this.bullets = []
+    this.audio = new Audio('assets/shoot.mp3')
     this.maxBullets = 3
   }
 
@@ -23,6 +25,9 @@ export default class Shooting {
   }
 
   private fire = () => {
+    this.audio.currentTime = 0
+    this.audio.volume = 0.5
+    this.audio.play()
     if (this.bullets.length >= this.maxBullets) {
       const bullet = this.bullets.shift()!
       this.game.remove(bullet.sprite)

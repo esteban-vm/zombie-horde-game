@@ -10,11 +10,13 @@ export default class Game {
   public state
   public player
   private size
-  public weather
+  private weather
   private zombies
   private preIntroScene
   private startScene
   private overScene
+  private music
+  private horde
   public zombieNames
 
   /** @private */
@@ -23,6 +25,11 @@ export default class Game {
     this.state = State.PreIntro
     this.size = 400
     this.zombieNames = zombies
+
+    this.music = new Audio('assets/hordezee.mp3')
+    this.music.volume = 0.5
+    this.horde = new Audio('assets/horde.mp3')
+    this.horde.volume = 0.5
 
     this.app = new Application({
       view: document.querySelector('canvas')!,
@@ -40,6 +47,27 @@ export default class Game {
     this.weather = new Weather(this)
     this.zombies = new Spawner(this, () => new Zombie(this)).spawns
 
+    this.mainLoop()
+    this.setListeners()
+  }
+
+  public static async initialize() {
+    try {
+      all.forEach((asset) => {
+        const resource = asset !== 'hero' && asset !== 'bullet' && asset !== 'rain' ? asset + 'zee' : asset
+        const extension = asset === 'bullet' || asset === 'rain' ? '.png' : '.json'
+        Assets.add(asset, `assets/${resource + extension}`)
+      })
+
+      await Assets.load([...all])
+      return new Game()
+    } catch (error) {
+      if (import.meta.env.DEV) console.log(error)
+      return null
+    }
+  }
+
+  private mainLoop() {
     this.app.ticker.add((delta) => {
       if (this.player.dead) this.state = State.Over
       this.preIntroScene.visible = this.state === State.PreIntro
@@ -61,24 +89,30 @@ export default class Game {
           break
       }
     })
-
-    document.addEventListener('click', this.handleClick)
   }
 
-  public static async initialize() {
-    try {
-      all.forEach((asset) => {
-        const resource = asset !== 'hero' && asset !== 'bullet' && asset !== 'rain' ? asset + 'zee' : asset
-        const extension = asset === 'bullet' || asset === 'rain' ? '.png' : '.json'
-        Assets.add(asset, `assets/${resource + extension}`)
-      })
+  private setListeners() {
+    this.music.addEventListener('timeupdate', function () {
+      if (this.currentTime > this.duration - 0.2) this.currentTime = 0
+    })
 
-      await Assets.load([...all])
-      return new Game()
-    } catch (error) {
-      console.log(error)
-      return null
-    }
+    this.horde.addEventListener('timeupdate', function () {
+      if (this.currentTime > this.duration - 0.2) this.currentTime = 0
+    })
+
+    document.addEventListener('click', () => {
+      switch (this.state) {
+        case State.PreIntro:
+          this.state = State.Intro
+          this.weather.enableSound()
+          this.music.play()
+          break
+        case State.Start:
+          this.state = State.Running
+          this.horde.play()
+          break
+      }
+    })
   }
 
   public add(obj: DisplayObject) {
@@ -134,23 +168,5 @@ export default class Game {
     container.addChild(subText)
     this.add(container)
     return container
-  }
-
-  // private start = () => {
-  //   this.started = true
-  //   this.weather.enableSound()
-  // }
-
-  private handleClick = () => {
-    switch (this.state) {
-      case State.PreIntro:
-        this.state = State.Intro
-        // this.music.play()
-        break
-      case State.Start:
-        this.state = State.Running
-        // this.zombieHorde.play()
-        break
-    }
   }
 }
